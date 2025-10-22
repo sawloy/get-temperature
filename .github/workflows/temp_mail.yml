@@ -1,6 +1,6 @@
 # ----------------------------------------
 # GitHub Actions Workflow: Temperature Mail Sender
-# 功能：定时运行 send_json_mail_temp.py，
+# 功能：定时运行 send_json_mail.py，
 # 优先从 Render API 获取今日天气；失败则本地抓取；邮件发送 JSON 附件。
 # ----------------------------------------
 
@@ -46,7 +46,7 @@ jobs:
           TEMP_API_URL: https://get-temperature.onrender.com/today
 
       - name: Run mail script (with retry inside)
-        run: python send_json_mail_temp.py
+        run: python send_json_mail.py
         env:
           # 若你想覆盖默认 API_URL，可在这里设 TEMP_API_URL
           # TEMP_API_URL: https://get-temperature.onrender.com/today
