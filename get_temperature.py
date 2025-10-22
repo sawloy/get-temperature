@@ -40,9 +40,7 @@ def today_temp():                                # 定义主函数，无参数
             # 初始化字段（一次性赋值多个变量：左=右链式形态）
             weather_text = ""                   # 空字符串作为默认
             tmax = tmin = None                  # 两个变量同时赋值为 None（Python 的“空值”）
-            sunrise = sunset = ""               # 两个变量同时赋值为空字符串
             wind = ""                           
-            pops = {"00-06": "", "06-12": "", "12-18": "", "18-24": ""}  # 新建字典，存 4 个时段降水概率
 
             # 天气文案（例：“晴のち曇”）
             wx = box.find(string=re.compile("晴|曇|雨|雪"))  # 在 box 内查找**文本节点**匹配任一关键字的第一个位置
@@ -61,25 +59,6 @@ def today_temp():                                # 定义主函数，无参数
                 m = re.search(r"最低\s*([\d\-]+)\s*℃", delet_unuse_text(tn.parent.get_text()))
                 if m: tmin = m.group(1)
 
-            # 日出/日落
-            sr = box.find(string=re.compile("日の出"))        # 找“日の出”
-            if sr:
-                m = re.search(r"(\d{2}時\d{2}分)", delet_unuse_text(sr.parent.get_text()))
-                # \d{2} 两位数字；整体形如 “06時25分”
-                if m: sunrise = m.group(1)
-            ss = box.find(string=re.compile("日の入"))        # 找“日の入”
-            if ss:
-                m = re.search(r"(\d{2}時\d{2}分)", delet_unuse_text(ss.parent.get_text()))
-                if m: sunset = m.group(1)
-
-            # 降水確率（四个时间段）
-            precip_row = box.find(string=re.compile("降水確率"))   # 找“降水確率”出现的那一行
-            if precip_row:
-                row = precip_row.parent.get_text(" ")            # get_text(" ") 把子节点文本用空格连接成一行
-                nums = re.findall(r"\d+%", row)                  # findall 找出所有百分数字样（如 "10%"）
-                if len(nums) == 4:                               # 防御式判断：确保恰好四段
-                    pops["00-06"], pops["06-12"], pops["12-18"], pops["18-24"] = nums  # 序列解包赋值
-
             # 最大风速
             wind_row = box.find(string=re.compile("最大風速"))     # 找“最大風速”
             if wind_row:
@@ -87,19 +66,10 @@ def today_temp():                                # 定义主函数，无参数
 
             # 返回今日天气的完整信息（字典：键值对集合）
             return {
-                "runDate": dt.datetime.utcnow().isoformat(),  # dt.datetime.utcnow() 取 UTC 当前时间；.isoformat() 转 ISO 字符串
-                "city": "北九州市",
-                "date": date_jp,
                 "weather_text": weather_text,
                 "t_max": tmax,
                 "t_min": tmin,
-                "pop_00_06": pops["00-06"],
-                "pop_06_12": pops["06-12"],
-                "pop_12_18": pops["12-18"],
-                "pop_18_24": pops["18-24"],
                 "wind_max": wind,
-                "sunrise": sunrise,
-                "sunset": sunset
             }
 
     # 如果找不到“今日”天气，返回空字典（语义为“无结果”）
