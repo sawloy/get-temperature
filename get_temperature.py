@@ -10,7 +10,7 @@ HEADERS = {
 }
 
 # ---------- 工具函数：清除字符串中的多余空白 ----------
-def text_clean(s):
+def delet_unuse_text(s):
     """去掉字符串中的多余空格、换行"""
     return re.sub(r"\s+", " ", s).strip()
 
@@ -23,7 +23,7 @@ def scrape_today():
 
     # 遍历所有 h3/h4 标签，寻找包含“今日”文字的部分
     for h in soup.find_all(["h3", "h4"]):
-        title = text_clean(h.get_text())
+        title = delet_unuse_tex(h.get_text())
         if title.startswith("今日"):  # 找到“今日”的天气块
             box = h.find_parent()  # 取得整个天气信息块
             if not box:
@@ -43,26 +43,26 @@ def scrape_today():
             # 天气文案（例：“晴のち曇”）
             wx = box.find(string=re.compile("晴|曇|雨|雪"))
             if wx:
-                weather_text = text_clean(wx)
+                weather_text = delet_unuse_tex(wx)
 
             # 最高/最低气温
             tx = box.find(string=re.compile("最高"))
             if tx:
-                m = re.search(r"最高\s*([\d\-]+)\s*℃", text_clean(tx.parent.get_text()))
+                m = re.search(r"最高\s*([\d\-]+)\s*℃", delet_unuse_tex(tx.parent.get_text()))
                 if m: tmax = m.group(1)
             tn = box.find(string=re.compile("最低"))
             if tn:
-                m = re.search(r"最低\s*([\d\-]+)\s*℃", text_clean(tn.parent.get_text()))
+                m = re.search(r"最低\s*([\d\-]+)\s*℃", delet_unuse_tex(tn.parent.get_text()))
                 if m: tmin = m.group(1)
 
             # 日出/日落
             sr = box.find(string=re.compile("日の出"))
             if sr:
-                m = re.search(r"(\d{2}時\d{2}分)", text_clean(sr.parent.get_text()))
+                m = re.search(r"(\d{2}時\d{2}分)", delet_unuse_tex(sr.parent.get_text()))
                 if m: sunrise = m.group(1)
             ss = box.find(string=re.compile("日の入"))
             if ss:
-                m = re.search(r"(\d{2}時\d{2}分)", text_clean(ss.parent.get_text()))
+                m = re.search(r"(\d{2}時\d{2}分)", delet_unuse_tex(ss.parent.get_text()))
                 if m: sunset = m.group(1)
 
             # 降水確率（四个时间段）
@@ -76,7 +76,7 @@ def scrape_today():
             # 最大风速
             wind_row = box.find(string=re.compile("最大風速"))
             if wind_row:
-                wind = text_clean(wind_row.parent.get_text())
+                wind = delet_unuse_tex(wind_row.parent.get_text())
 
             # 返回今日天气的完整信息
             return {
