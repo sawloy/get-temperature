@@ -15,7 +15,7 @@ def delet_unuse_text(s):
     return re.sub(r"\s+", " ", s).strip()
 
 # ---------- 主函数：只提取“今日”的天气信息 ----------
-def scrape_today():
+def today_temp():
     # 获取网页HTML
     html = requests.get(URL, headers=HEADERS, timeout=30).text
     # 用BeautifulSoup解析
@@ -101,5 +101,5 @@ def scrape_today():
 # ---------- 入口 ----------
 if __name__ == "__main__":
     import json
-    data = scrape_today()                     # 执行抓取
+    data = today_temp()                     # 执行抓取
     print(json.dumps(data, ensure_ascii=False, indent=2))  # 美化输出JSON
